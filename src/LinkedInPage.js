@@ -1,11 +1,31 @@
-import React from "react";
+import React,{useEffect} from "react";
 import styled from "styled-components";
 import { useLinkedIn } from "react-linkedin-login-oauth2";
 import linkedin from "react-linkedin-login-oauth2/assets/linkedin.png";
+import jwtDecode from 'jwt-decode'
 
 function LinkedInPage() {
+  function handleCallbackResponse(response) {
+    console.log("Encoded JWT ID token: ",response.credential);
+    console.log(jwtDecode(response.credential));
+  }
+  useEffect(() => {
+    
+  window.google.accounts.id.initialize({
+    client_id:"614696327203-nm8ckitvhv7uqaic8mlgmjisl238qt4a.apps.googleusercontent.com",
+    callback:handleCallbackResponse
+  })
+
+  window.google.accounts.id.renderButton(
+    document.getElementById('signInDiv'),
+    {
+      theme:"outline",size:"large"
+    }
+  )
+    
+  }, [])
   const { linkedInLogin } = useLinkedIn({
-    clientId: "86vhj2q7ukf83q",
+    clientId: "86bs6x15x23n7j",
     redirectUri: `${window.location.origin}/linkedin`,
     onSuccess: (code) => {
       console.log(code);
@@ -23,6 +43,8 @@ function LinkedInPage() {
   const [errorMessage, setErrorMessage] = React.useState("");
 
   return (
+    <>
+    <div id="signInDiv"></div>
     <Wrapper>
       <img
         onClick={linkedInLogin}
@@ -50,6 +72,7 @@ function LinkedInPage() {
       )}
       {errorMessage && <div>{errorMessage}</div>}
     </Wrapper>
+    </>
   );
 }
 
